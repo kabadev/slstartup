@@ -21,6 +21,7 @@ jobs:
         echo "NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=${{ secrets.NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL }}" >> .env
         echo "NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=${{ secrets.NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL }}" >> .env
         echo "MONGO_URL=${{ secrets.MONGO_URL }}" >> .env
+
     - name: Build Docker image
       run: |
         docker build -t slstartup:latest .
@@ -38,6 +39,10 @@ jobs:
     needs: build
     runs-on: self-hosted
     steps:
+    - name: Log in to Docker Hub
+      run: |
+        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
     - name: Pull Docker image
       run: |
         docker pull "${{ secrets.DOCKER_USERNAME }}/slstartup:latest"
